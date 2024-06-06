@@ -87,7 +87,7 @@ void ExpectationMaximisation(const std::vector<double>& X, std::vector<double>& 
     double currentLike = 0.0, prevLike = 0.0, epsilon = 0.000001, delta = 1.0;
     int iter = 0;
     std::vector<std::vector<double>> posteriors(mus.size(), std::vector<double>(X.size()));
-    while(delta>epsilon && iter < 72){
+    while(delta>epsilon && iter < 10000){
         Posterior(X, mus, sigmas, probs, posteriors);
         OptimalPi(posteriors, probs);
         OptimalMu(X, posteriors, mus);
@@ -107,47 +107,57 @@ int main()
     std::random_device rd{};
     std::mt19937 gen{rd()};
     
+    // True unkown params
     double mu1 = 0.0, mu2 = 4.0, sigma1 = 1.0, sigma2 = 2.0, pi1 = 0.2;
+
+    // Size of total dataset
     int N = 1000;
     int split_index = static_cast<int>(N * 0.2);
 
-    // Generate Z1 and Z2 vectors with values sampled from two Normal Distributions
+    // First Gaussian
     std::vector<double> Z1(split_index);
     std::normal_distribution d1{mu1, sigma1};
     for (int i = 0; i < split_index; ++i) {
         Z1[i] = d1(gen);
     }
 
+    // Second Gaussian
     std::vector<double> Z2(N-split_index);
     std::normal_distribution d2{mu2, sigma2};
     for (int i = 0; i < N-split_index; ++i) {
         Z2[i] = d2(gen);
     }
 
+    // GMM combininig Z1 and Z2
     std::vector<double> X;
     X.reserve( Z1.size() + Z2.size() );
     X.insert( X.end(), Z1.begin(), Z1.end() );
     X.insert( X.end(), Z2.begin(), Z2.end() );
 
+    // EM ALGORITHM:
+
+    // Initial guess for params of GMM
     std::vector<double> mus = {0.0, 0.5};
     std::vector<double> sigmas = {1.0, 1.5};
     std::vector<double> probs = {0.5, 0.5};
 
+    // Get prediction
     ExpectationMaximisation(X, mus, sigmas, probs);
 
+    // Output predicted params
     std::cout << "mu1 = " << mus[0] << ", mu2 = " << mus[1] << ".\n";
     std::cout << "sigmas1 = " << sigmas[0] << ", sigmas2 = " << sigmas[1] << ".\n";
     std::cout << "probs1 = " << probs[0] << ", probs2 = " << probs[1] << ".\n";
 
+    // Write data to JSON file
     json j;
     j["X"] = X;
     j["mus"] = mus;
     j["sigmas"] = sigmas;
     j["probs"] = probs;
 
-    // Write the JSON object to a file
     std::ofstream file("data.json");
-    file << j.dump(4); // Pretty print with 4 spaces
+    file << j.dump(4);
     file.close();
 
     std::cout << "Data saved to data.json" << std::endl;
