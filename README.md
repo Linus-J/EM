@@ -16,6 +16,17 @@ Assuming g++ is the installed compiler,
 
 Use the Make_Figures.ipynb notebook to generate both true and predicted plots for your GMM.
 
+#### Example output for a GMM with 2 Gaussian Models:
+For the distribution $Z_1$, $\mu_1 = 0, \sigma_1 = 1.0, \pi_1 = 0.2.$
+
+For $Z_2$, $\mu_2 = 4, \sigma_2 = 2.0, \pi_2 = 0.8.$
+
+
+<img src="https://github.com/Linus-J/repo-images/blob/main/EM/Distribution.png" alt="Distribution" width="600"/>
+<img src="https://github.com/Linus-J/repo-images/blob/main/EM/True_Distribution.png" alt="True_Distribution" width="600"/>
+
+<img src="https://github.com/Linus-J/repo-images/blob/main/EM/Predicted_Distribution.png" alt="Predicted_Distribution" width="600"/>
+
 ### References
 
 [1] Gerry Christian Ongko, Implementing Expectation-Maximisation Algorithm from Scratch with Python, Towards Data Science.
